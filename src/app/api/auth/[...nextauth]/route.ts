@@ -10,7 +10,10 @@ const handler = NextAuth({
   adapter: PrismaAdapter(prisma) as any,
   session: { strategy: 'jwt' },
   providers: [
-
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    }),
     CredentialsProvider({
       name: 'Test Login',
       credentials: {

@@ -13,6 +13,23 @@ export default function VirtualOfficeContainer() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [players, setPlayers] = useState<any[]>([]);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [scheduleMsg, setScheduleMsg] = useState('');
+
+  useEffect(() => {
+    const checkSchedule = () => {
+      const currentHour = new Date().getHours();
+      if (currentHour >= 13 && currentHour < 14) {
+        setScheduleMsg('Tushlik tanaffusi (13:00 - 14:00)');
+      } else if (currentHour < 10 || currentHour >= 19) {
+        setScheduleMsg('Ish vaqti tugagan. Ofis yopiq (10:00 - 19:00)');
+      } else {
+        setScheduleMsg('');
+      }
+    };
+    checkSchedule();
+    const t = setInterval(checkSchedule, 60000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -85,6 +102,12 @@ export default function VirtualOfficeContainer() {
 
       <DashboardOverlay />
       <QueueHUD />
+
+      {scheduleMsg && (
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 bg-red-600/90 text-white px-6 py-2 rounded-full shadow-lg font-bold backdrop-blur-md animate-pulse">
+          {scheduleMsg}
+        </div>
+      )}
       
       {session?.user?.role === 'EMPLOYEE' && (
         <div className="absolute top-4 right-4 z-20">
