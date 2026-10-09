@@ -15,6 +15,37 @@ export default function VirtualOfficeContainer() {
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [scheduleMsg, setScheduleMsg] = useState('');
 
+  // Mock Bots to show office activity
+  useEffect(() => {
+    const initialBots = [
+      { id: 'bot1', name: 'Bot Xodim 1', role: 'EMPLOYEE', status: 'ONLINE', x: 10, y: 15, direction: 'down' },
+      { id: 'bot2', name: 'Bot Xodim 2', role: 'EMPLOYEE', status: 'ONLINE', x: 20, y: 14, direction: 'up' },
+      { id: 'bot3', name: 'Mijoz Sardor', role: 'CLIENT', status: 'ONLINE', x: 8, y: 6, direction: 'right' },
+      { id: 'bot4', name: 'Direktor (Bot)', role: 'DIRECTOR', status: 'BUSY', x: 32, y: 5, direction: 'down' },
+      { id: 'bot5', name: 'Mijoz Malika', role: 'CLIENT', status: 'ONLINE', x: 25, y: 18, direction: 'left' },
+    ];
+    
+    setPlayers(prev => {
+      const realPlayers = prev.filter(p => !p.id.startsWith('bot'));
+      return [...initialBots, ...realPlayers];
+    });
+
+    const moveInterval = setInterval(() => {
+      setPlayers(prev => prev.map(p => {
+        if (p.id.startsWith('bot') && Math.random() > 0.3) {
+          const dx = Math.floor(Math.random() * 3) - 1;
+          const dy = Math.floor(Math.random() * 3) - 1;
+          const newX = Math.max(1, Math.min(38, p.x + dx));
+          const newY = Math.max(1, Math.min(23, p.y + dy));
+          return { ...p, x: newX, y: newY };
+        }
+        return p;
+      }));
+    }, 1500);
+
+    return () => clearInterval(moveInterval);
+  }, []);
+
   useEffect(() => {
     const checkSchedule = () => {
       const currentHour = new Date().getHours();
@@ -47,11 +78,17 @@ export default function VirtualOfficeContainer() {
       });
 
       socketIo.on('office_state', (state) => {
-        setPlayers(state);
+        setPlayers(prev => {
+          const bots = prev.filter(p => p.id.startsWith('bot'));
+          return [...bots, ...state];
+        });
       });
 
       socketIo.on('player_joined', (player) => {
-        setPlayers((prev) => [...prev, player]);
+        setPlayers((prev) => {
+          if (prev.find(p => p.id === player.id)) return prev;
+          return [...prev, player];
+        });
       });
 
       socketIo.on('player_moved', (data) => {
@@ -97,7 +134,7 @@ export default function VirtualOfficeContainer() {
       {/* UI Overlay Layer */}
       <div className="absolute top-4 left-4 z-10 p-4 bg-slate-800/80 backdrop-blur-md rounded-xl text-white shadow-2xl border border-slate-700">
         <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">Notarial Idora</h1>
-        <p className="text-sm text-slate-300">Onlayn: {players.length}</p>
+        <p className="text-sm text-slate-300">Haqiqiy foydalanuvchilar onlayn: {players.filter(p => !p.id.startsWith('bot')).length}</p>
       </div>
 
       <DashboardOverlay />
@@ -142,3 +179,4 @@ export default function VirtualOfficeContainer() {
     </div>
   );
 }
+
