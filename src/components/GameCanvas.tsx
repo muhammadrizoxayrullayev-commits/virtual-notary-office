@@ -92,9 +92,23 @@ export default function GameCanvas({ players, onMove, currentSocketId }: GameCan
           const newX = Math.max(0, Math.min(MAP_WIDTH - 1, currentLocal.x + dx));
           const newY = Math.max(0, Math.min(MAP_HEIGHT - 1, currentLocal.y + dy));
           
-          if (newX !== currentLocal.x || newY !== currentLocal.y) {
+          const isSolid = (x: number, y: number) => {
+            if (x <= 1 || x >= 38 || y <= 1 || y >= 23) return true;
+            if (x >= 2 && x <= 10 && y >= 2 && y <= 8) return true;
+            if (x >= 13 && x <= 22 && y >= 3 && y <= 9) return true;
+            if (x >= 26 && x <= 35 && y >= 3 && y <= 9) return true;
+            if (x >= 13 && x <= 22 && y >= 16 && y <= 21) return true;
+            if (x >= 26 && x <= 35 && y >= 16 && y <= 21) return true;
+            if (x >= 2 && x <= 10 && y >= 16 && y <= 22) return true;
+            return false;
+          };
+
+          if (!isSolid(newX, newY) && (newX !== currentLocal.x || newY !== currentLocal.y)) {
             onMoveRef.current(newX, newY, direction);
             setLocalPlayer({ x: newX, y: newY });
+          } else if (newX === currentLocal.x && newY === currentLocal.y) {
+            // Just turned around without moving
+             onMoveRef.current(newX, newY, direction);
           }
           lastMoveTime = time;
         }
