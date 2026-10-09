@@ -18,10 +18,10 @@ export default function VirtualOfficeContainer() {
   // Mock Bots to show office activity
   useEffect(() => {
     const initialBots = [
-      { id: 'bot1', name: 'Bot Xodim 1', role: 'EMPLOYEE', status: 'ONLINE', x: 10, y: 10, direction: 'down' },
-      { id: 'bot2', name: 'Bot Xodim 2', role: 'EMPLOYEE', status: 'ONLINE', x: 20, y: 12, direction: 'up' },
-      { id: 'bot3', name: 'Mijoz Sardor', role: 'CLIENT', status: 'ONLINE', x: 8, y: 12, direction: 'right' },
-      { id: 'bot4', name: 'Direktor (Bot)', role: 'DIRECTOR', status: 'BUSY', x: 30, y: 10, direction: 'down' },
+      { id: 'bot1', name: 'Bot Xodim 1', role: 'EMPLOYEE', status: 'ONLINE', x: 12, y: 12, direction: 'down' },
+      { id: 'bot2', name: 'Bot Xodim 2', role: 'EMPLOYEE', status: 'ONLINE', x: 20, y: 14, direction: 'up' },
+      { id: 'bot3', name: 'Mijoz Sardor', role: 'CLIENT', status: 'ONLINE', x: 10, y: 12, direction: 'right' },
+      { id: 'bot4', name: 'Direktor (Bot)', role: 'DIRECTOR', status: 'BUSY', x: 30, y: 12, direction: 'down' },
       { id: 'bot5', name: 'Mijoz Malika', role: 'CLIENT', status: 'ONLINE', x: 25, y: 14, direction: 'left' },
     ];
     
@@ -31,21 +31,19 @@ export default function VirtualOfficeContainer() {
     });
 
     const isSolid = (x: number, y: number) => {
-      if (x <= 1 || x >= 38 || y <= 1 || y >= 23) return true; // Map borders
+      if (x <= 0 || x >= 39 || y <= 0 || y >= 24) return true; // borders
       
-      // Reception desk area
-      if (x >= 2 && x <= 10 && y >= 2 && y <= 8) return true;
+      // Left area (Reception & Bar Stools)
+      if (x >= 1 && x <= 9 && y >= 1 && y <= 11) return true; 
       
-      // Top Workstations
-      if (x >= 13 && x <= 22 && y >= 3 && y <= 9) return true;
-      if (x >= 26 && x <= 35 && y >= 3 && y <= 9) return true;
+      // Left area (Lounge & Sofas)
+      if (x >= 1 && x <= 10 && y >= 17 && y <= 23) return true;
+
+      // Top workspace (desks, plants, conference room)
+      if (x >= 12 && x <= 38 && y >= 1 && y <= 8) return true;
       
-      // Bottom Workstations
-      if (x >= 13 && x <= 22 && y >= 16 && y <= 21) return true;
-      if (x >= 26 && x <= 35 && y >= 16 && y <= 21) return true;
-      
-      // Lounge area
-      if (x >= 2 && x <= 10 && y >= 16 && y <= 22) return true;
+      // Bottom workspace (desks, vertical plants)
+      if (x >= 12 && x <= 38 && y >= 17 && y <= 23) return true;
 
       return false;
     };

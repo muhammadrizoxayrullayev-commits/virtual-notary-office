@@ -93,13 +93,20 @@ export default function GameCanvas({ players, onMove, currentSocketId }: GameCan
           const newY = Math.max(0, Math.min(MAP_HEIGHT - 1, currentLocal.y + dy));
           
           const isSolid = (x: number, y: number) => {
-            if (x <= 1 || x >= 38 || y <= 1 || y >= 23) return true;
-            if (x >= 2 && x <= 10 && y >= 2 && y <= 8) return true;
-            if (x >= 13 && x <= 22 && y >= 3 && y <= 9) return true;
-            if (x >= 26 && x <= 35 && y >= 3 && y <= 9) return true;
-            if (x >= 13 && x <= 22 && y >= 16 && y <= 21) return true;
-            if (x >= 26 && x <= 35 && y >= 16 && y <= 21) return true;
-            if (x >= 2 && x <= 10 && y >= 16 && y <= 22) return true;
+            if (x <= 0 || x >= 39 || y <= 0 || y >= 24) return true; // borders
+            
+            // Left area (Reception & Bar Stools)
+            if (x >= 1 && x <= 9 && y >= 1 && y <= 11) return true; 
+            
+            // Left area (Lounge & Sofas)
+            if (x >= 1 && x <= 10 && y >= 17 && y <= 23) return true;
+
+            // Top workspace (desks, plants, conference room)
+            if (x >= 12 && x <= 38 && y >= 1 && y <= 8) return true;
+            
+            // Bottom workspace (desks, vertical plants)
+            if (x >= 12 && x <= 38 && y >= 17 && y <= 23) return true;
+
             return false;
           };
 
